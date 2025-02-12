@@ -4,8 +4,10 @@
   "description": "This is Node Service",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
-    "start": "node server.js"
+    "test": "jest --coverage",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "npm run test"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,11 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "nodemon": "^3.0.0",
+    "cross-env": "^7.0.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

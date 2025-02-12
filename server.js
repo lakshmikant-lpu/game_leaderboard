@@ -6,3 +6,5 @@ app.get("/top-scores", (req, res) => {
 });
 
 app.listen(3000, () => console.log("Leaderboard service running on port 3000"));
+
+module.exports = app;

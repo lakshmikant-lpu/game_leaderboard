@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: leaderboard
-        image: lakshmikant4lpu/leaderboard-service:v1
+        image: lakshmikant4lpu/game_leaderboard:1.0
         ports:
         - containerPort: 3000

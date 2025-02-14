@@ -64,7 +64,7 @@ pipeline {
                 echo 'Deploying to EC2...'
                 sshagent(['ec2-ssh-key']) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no ec2-user@47.129.100.80 <<EOF
+                    ssh -o StrictHostKeyChecking=no ubuntu@47.129.100.80 <<EOF
                     docker stop ${IMAGE_NAME} || true
                     docker rm ${IMAGE_NAME} || true
                     docker pull ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}

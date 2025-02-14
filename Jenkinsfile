@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Cloning repository...'
+                echo 'Cloning repository....'
                 git branch: 'main', url: 'https://github.com/lakshmikant-lpu/game_leaderboard.git'
             }
         }

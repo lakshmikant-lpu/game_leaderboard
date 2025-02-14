@@ -4,4 +4,5 @@ const app = require("./server");
 test("GET /top-scores", async () => {
   const response = await request(app).get("/top-scores");
   expect(response.statusCode).toBe(200);
+  expect(response.body).toBe(truthy);
 });

@@ -35,12 +35,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo 'Running tests...'
-                sh 'npm test -- --coverage --ci --reporters=default --reporters=jest-junit'
-            }
-            post {
-                always {
-                    junit 'jest-junit.xml'  // Store test results in Jenkins
-                }
+                sh 'npm test'
             }
         }
 

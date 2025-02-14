@@ -2,7 +2,10 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '18'  // Update if needed
+        NODE_VERSION = '18'
+        DOCKER_HUB_USER = 'lakshmikant4lpu'
+        IMAGE_NAME = 'game_leaderboard'
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -15,7 +18,6 @@ pipeline {
 
         stage('Setup Node.js') {
             steps {
-                echo 'Setting up Node.js...'
                 script {
                     def nodeInstalled = sh(script: 'node -v || true', returnStdout: true).trim()
                     if (!nodeInstalled.contains(NODE_VERSION)) {
@@ -32,38 +34,54 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        // stage('Run Tests') {
+        //     steps {
+        //         echo 'Running tests...'
+        //         sh 'npm test'
+        //     }
+        // }
+
+        stage('Build Docker Image') {
             steps {
-                echo 'Running tests...'
-                sh 'npm test'
+                echo 'Building Docker image...'
+                sh "docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} ."
             }
         }
 
-        stage('Build') {
+        stage('Push to Docker Hub') {
             steps {
-                echo 'Building application...'
-                sh 'npm run build'  // Runs tests as part of build
+                echo 'Logging in to Docker Hub...'
+                withCredentials([string(credentialsId: 'docker-hub-password', variable: 'DOCKER_PASSWORD')]) {
+                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin"
+                }
+                echo 'Pushing image to Docker Hub...'
+                sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
 
-        stage('Deploy') {
-            when {
-                branch 'main'
-            }
-            steps {
-                echo 'Deploying application...'
-                sh 'echo "Deployment script goes here"'
-                // Add actual deployment commands, such as copying files, Docker, SSH, etc.
-            }
-        }
+        // stage('Deploy to EC2') {
+        //     steps {
+        //         echo 'Deploying to EC2...'
+        //         sshagent(['your-ec2-ssh-key']) {
+        //             sh """
+        //             ssh -o StrictHostKeyChecking=no ec2-user@your-ec2-ip <<EOF
+        //             docker stop ${IMAGE_NAME} || true
+        //             docker rm ${IMAGE_NAME} || true
+        //             docker pull ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+        //             docker run -d -p 80:3000 --name ${IMAGE_NAME} ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+        //             EOF
+        //             """
+        //         }
+        //     }
+        // }
     }
 
     post {
         success {
-            echo '✅ Pipeline completed successfully! 🎉'
+            echo '✅ Deployment successful!'
         }
         failure {
-            echo '❌ Pipeline failed! Check logs for details.'
+            echo '❌ Deployment failed!'
         }
     }
 }
